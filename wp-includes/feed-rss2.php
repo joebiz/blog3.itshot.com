@@ -81,10 +81,19 @@ do_action( 'rss_tag_pre', 'rss2' );
 	 */
 	do_action( 'rss2_head');
 
+                $regex = '/https?\:\/\/[^\" ]+/i';
 	while( have_posts()) : the_post();
+                    $thumb_url = '';
+                    if(has_post_thumbnail()){
+                        $thumb_url = get_the_post_thumbnail_url(null, 'medium');
+                    } else {
+                        preg_match($regex, get_the_content(), $matches);
+                        $thumb_url = str_replace('http:', 'https:', $matches[0]);
+                    }
 	?>
 	<item>
 		<title><?php the_title_rss() ?></title>
+                                <thumb><?php echo $thumb_url?></thumb>
 		<link><?php the_permalink_rss() ?></link>
 <?php if ( get_comments_number() || comments_open() ) : ?>
 		<comments><?php comments_link_feed(); ?></comments>
